@@ -4,14 +4,24 @@ package com.auebs.billing;
 import java.math.BigDecimal;
 
 public class ResidentialBillingStrategy implements BillingStrategy {
-    private static final BigDecimal RATE_PER_KWH = new BigDecimal("0.12");
-    private static final BigDecimal BASE_CHARGE = new BigDecimal("5.00");
+    private final BillingConfig.ResidentialConfig config;
+    
+    public ResidentialBillingStrategy() {
+        this.config = new BillingConfig.ResidentialConfig(
+            new BigDecimal("0.12"), // rate per kWh
+            new BigDecimal("5.00")   // base charge
+        );
+    }
+    
+    public ResidentialBillingStrategy(BillingConfig.ResidentialConfig config) {
+        this.config = config;
+    }
 
     @Override
     public BigDecimal calculateBill(Account account) {
         // Formula for residential customers:
-        // (usage * RATE_PER_KWH) + BASE_CHARGE
-        BigDecimal usageCharge = account.getUsage().multiply(RATE_PER_KWH);
-        return usageCharge.add(BASE_CHARGE);
+        // (usage * ratePerKwh) + baseCharge
+        BigDecimal usageCharge = account.usage().multiply(config.ratePerKwh());
+        return usageCharge.add(config.baseCharge());
     }
 }

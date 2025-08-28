@@ -3,32 +3,27 @@ package com.auebs.billing;
 
 import java.math.BigDecimal;
 
-public class Account {
-    private final String accountNumber;
-    private final Role role;
-    private final BigDecimal usage; // Example data, like kWh used
-
+public record Account(
+    String accountNumber,
+    Role role,
+    BigDecimal usage 
+) {
     public enum Role {
         RESIDENTIAL,
         COMMERCIAL,
         INDUSTRIAL
     }
-
-    public Account(String accountNumber, Role role, BigDecimal usage) {
-        this.accountNumber = accountNumber;
-        this.role = role;
-        this.usage = usage;
-    }
-
-    public String getAccountNumber() {
-        return accountNumber;
-    }
-
-    public Role getRole() {
-        return role;
-    }
-
-    public BigDecimal getUsage() {
-        return usage;
+    
+    // Custom constructor with validation
+    public Account {
+        if (accountNumber == null || accountNumber.isBlank()) {
+            throw new IllegalArgumentException("Account number cannot be null");
+        }
+        if (role == null) {
+            throw new IllegalArgumentException("Role cannot be null");
+        }
+        if (usage == null || usage.compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException("Usage cannot be null or negative");
+        }
     }
 }
